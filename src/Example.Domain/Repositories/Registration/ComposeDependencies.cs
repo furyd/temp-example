@@ -9,6 +9,7 @@ namespace Example.Domain.Repositories.Registration
         public static IServiceCollection RegisterRepositories(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddScoped<IFieldRepository, SqlServerFieldRepository>();
+            serviceCollection.AddScoped<IMultipleRepository, SqlServerMultipleRepository>();
             return serviceCollection;
         }
     }
