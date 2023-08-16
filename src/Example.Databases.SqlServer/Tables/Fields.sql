@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[Fields]
+(
+		[RowId]			INT					NOT NULL	IDENTITY(1,1)					PRIMARY KEY
+	,	[Id]			UNIQUEIDENTIFIER	NOT NULL	DEFAULT(NEWSEQUENTIALID())
+	,	[FieldType]		INT					NOT NULL
+	,	[Employer]		INT					NOT NULL
+	,	[Text]			NVARCHAR(128)		NOT NULL
+)

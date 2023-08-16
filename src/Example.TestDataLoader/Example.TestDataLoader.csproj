@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UserSecretsId>8a2df1c5-290f-438c-8cb0-4afb81e3bfb5</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bogus" Version="34.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Example.Domain\Example.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="FieldTypes\" />
+    <Folder Include="Fields\" />
+    <Folder Include="Options\" />
+  </ItemGroup>
+
+</Project>
