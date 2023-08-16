@@ -8,7 +8,6 @@ using Example.Domain.Shared.Interfaces;
 using Example.Domain.Shared.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
-using FieldModel = Example.Domain.Repositories.Models.FieldModel;
 
 namespace Example.Domain.Repositories.Implementation;
 
