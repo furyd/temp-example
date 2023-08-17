@@ -1,4 +1,5 @@
-﻿using Example.Domain.Shared.Interfaces;
+﻿using Example.Api.Constants;
+using Example.Domain.Shared.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Example.Api.Services.Implementation;
@@ -14,9 +15,9 @@ public class ResultService
 
     public IActionResult List<T>(IPager<T> pageItems)
     {
-        _httpContextAccessor.HttpContext?.Response.Headers.Add("Page", pageItems.Page.ToString());
-        _httpContextAccessor.HttpContext?.Response.Headers.Add("PageSize", pageItems.PageSize.ToString());
-        _httpContextAccessor.HttpContext?.Response.Headers.Add("Records", pageItems.ActualPageSize.ToString());
+        _httpContextAccessor.HttpContext?.Response.Headers.Add(Headers.Page, pageItems.Page.ToString());
+        _httpContextAccessor.HttpContext?.Response.Headers.Add(Headers.PageSize, pageItems.PageSize.ToString());
+        _httpContextAccessor.HttpContext?.Response.Headers.Add(Headers.Records, pageItems.ActualPageSize.ToString());
         return List(pageItems.Records);
     }
 
