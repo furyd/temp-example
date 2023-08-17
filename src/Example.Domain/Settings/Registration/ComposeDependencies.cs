@@ -9,6 +9,7 @@ namespace Example.Domain.Settings.Registration
         {
             serviceCollection.AddOptions();
             serviceCollection.Configure<SqlServerSettings>(configuration.GetSection(nameof(SqlServerSettings)));
+            serviceCollection.Configure<ServiceBusSettings>(configuration.GetSection(nameof(ServiceBusSettings)));
             return serviceCollection;
         }
     }
