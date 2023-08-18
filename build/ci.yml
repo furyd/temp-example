@@ -7,6 +7,8 @@ pool:
 variables:
 - name: buildConfiguration
   value: release
+- name: projectName
+  value: Example.Api
 
 steps:
 - task: UseDotNet@2
@@ -26,7 +28,7 @@ steps:
   inputs:
     command: build
     arguments: --configuration $(buildConfiguration) --no-restore
-    projects: 'src/Example.Api/Example.Api.csproj'
+    projects: 'src/$(projectName)/$(projectName).csproj'
   displayName: Build API
 
 - task: DotNetCoreCLI@2
