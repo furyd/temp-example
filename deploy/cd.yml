@@ -9,26 +9,16 @@ resources:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+- name: infrastructurePath
+  value: $(Pipeline.Workspace)/ci/infrastructure
+
 steps:
 - download: ci
 
-# - task: Bash@3
-#   inputs:
-#     targetType: 'inline'
-#     script: 'env | sort'
-
-# - task: Bash@3
-#   inputs:
-#     targetType: 'inline'
-#     script: |
-#       for entry in "$PIPELINE_WORKSPACE/ci"/*
-#       do
-#         echo "$entry"
-#       done
-
 - task: qetza.replacetokens.replacetokens-task.replacetokens@4
   inputs:
-    rootDirectory: '$(Pipeline.Workspace)/ci/infrastructure'
+    rootDirectory: '$(infrastructurePath)'
     targetFiles: '**/*.parameters.devops.json'
   displayName: Replace tokens in parameters
 
@@ -39,8 +29,8 @@ steps:
     subscriptionId: 71584495-ad79-4ff8-ac31-45968fcf4d69
     location: uksouth
     templateLocation: 'Linked artifact'
-    csmFile: '$(Pipeline.Workspace)/infra/async.bicep'
-    csmParametersFile: 'infra/api.parameters.devops.json'
+    csmFile: '$(infrastructurePath)/async.bicep'
+    csmParametersFile: '$(infrastructurePath)/api.parameters.devops.json'
     deploymentMode: Incremental
     deploymentName: $(Build.BuildId)
-  displayName: Deploy temporary infrastructure
+  displayName: Deploy Infrastructure
