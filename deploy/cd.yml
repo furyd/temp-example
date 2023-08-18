@@ -21,7 +21,7 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      for entry in "$PIPELINE_WORKSPACE"/*
+      for entry in "$PIPELINE_WORKSPACE/ci"/*
       do
         echo "$entry"
       done
