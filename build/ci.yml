@@ -46,6 +46,14 @@ steps:
     publishTestResults: true
   displayName: Run Unit Tests
 
+- task: DotNetCoreCLI@2
+  inputs:
+    command: test
+    arguments: --configuration $(buildConfiguration) --no-restore --no-build"
+    projects: 'tests/integration/**/*.csproj'
+    publishTestResults: true
+  displayName: Run Integration Tests
+
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: VSTest
