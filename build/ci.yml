@@ -7,6 +7,8 @@ pool:
 variables:
 - name: buildConfiguration
   value: release
+- name: projectName
+  value: Example.Api
 
 steps:
 - task: UseDotNet@2
@@ -26,7 +28,7 @@ steps:
   inputs:
     command: build
     arguments: --configuration $(buildConfiguration) --no-restore
-    projects: 'src/Example.Api/Example.Api.csproj'
+    projects: 'src/$(projectName)/$(projectName).csproj'
   displayName: Build API
 
 - task: DotNetCoreCLI@2
@@ -43,6 +45,14 @@ steps:
     projects: 'tests/unit/**/*.csproj'
     publishTestResults: true
   displayName: Run Unit Tests
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: test
+    arguments: --configuration $(buildConfiguration) --no-restore --no-build"
+    projects: 'tests/integration/**/*.csproj'
+    publishTestResults: true
+  displayName: Run Integration Tests
 
 - task: PublishTestResults@2
   inputs:
@@ -61,8 +71,16 @@ steps:
     failIfCoverageEmpty: true
   displayName: Publish code coverage report
 
+- task: DotNetCoreCLI@2
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: 'src/$(projectName)/$(projectName).csproj'
+    arguments: --configuration $(buildConfiguration) --output "$(build.artifactstagingdirectory)/api"
+  displayName: Publish project
+
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: $(build.artifactstagingdirectory)
+    PathtoPublish: '$(build.artifactstagingdirectory)/api'
     ArtifactName: api
   displayName: Publish API
