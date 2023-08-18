@@ -4,6 +4,7 @@ using Example.Api.Services.Implementation;
 using Example.Domain.Queries.Registration;
 using Example.Domain.Repositories.Registration;
 using Example.Domain.Settings.Registration;
+using Example.Domain.Shared.Metrics.Registration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.RegisterQueries();
 builder.Services.RegisterRepositories();
 builder.Services.RegisterSettings(builder.Configuration);
+builder.Services.RegisterMetrics();
 builder.Services.AddSingleton<ResultService>();
 builder.Services.AddHttpContextAccessor();
 

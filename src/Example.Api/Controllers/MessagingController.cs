@@ -4,6 +4,7 @@ using Example.Domain.Settings;
 using Microsoft.Extensions.Options;
 using Azure.Messaging.ServiceBus;
 using System.Text.Json;
+using Example.Domain.Shared.Metrics.Interfaces;
 
 namespace Example.Api.Controllers
 {
@@ -12,10 +13,12 @@ namespace Example.Api.Controllers
     public class MessagingController : ControllerBase
     {
         private readonly ServiceBusSettings _settings;
+        private readonly IMetrics _metrics;
 
-        public MessagingController(IOptions<ServiceBusSettings> settings)
+        public MessagingController(IOptions<ServiceBusSettings> settings, IMetrics metrics)
         {
             _settings = settings.Value;
+            _metrics = metrics;
         }
 
         [HttpPost]
@@ -35,8 +38,10 @@ namespace Example.Api.Controllers
                 ContentType = System.Net.Mime.MediaTypeNames.Application.Json
             };
 
-            await sender.SendMessageAsync(message);
-
+            using(var _ = _metrics.TrackDuration(nameof(sender.SendMessageAsync)))
+            {
+                await sender.SendMessageAsync(message);
+            }
 
             return Accepted();
         }
