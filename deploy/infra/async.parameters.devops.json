@@ -1,0 +1,18 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters":{
+        "projectName": {
+            "value": "#{project.name}#"
+        },
+        "serviceName": {
+            "value": "#{service.name}#"
+        },
+        "environmentName": {
+            "value": "#{environment.name}#"
+        },
+        "location": {
+            "value": "#{service.location}#"
+        }
+    }
+}
