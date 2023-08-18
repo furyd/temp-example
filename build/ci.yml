@@ -71,8 +71,22 @@ steps:
     failIfCoverageEmpty: true
   displayName: Publish code coverage report
 
+- task: DotNetCoreCLI@2
+  inputs:
+    command: publish
+    publishWebProjects: false
+    projects: 'src/$(projectName)/$(projectName).csproj'
+    arguments: --configuration $(buildConfiguration) --output "$(build.artifactstagingdirectory)/api"
+  displayName: Publish project
+
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: $(build.artifactstagingdirectory)
+    PathtoPublish: '$(build.artifactstagingdirectory)/api'
     ArtifactName: api
   displayName: Publish API
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'deploy/infra'
+    ArtifactName: infrastructure
+  displayName: Publish Infrastructure as Code files
