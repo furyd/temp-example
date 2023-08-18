@@ -11,9 +11,6 @@
         "environmentName": {
             "value": "test"
         },
-        "sku": {
-            "value": "Standard"
-        },
         "location": {
             "value": "uksouth"
         }
