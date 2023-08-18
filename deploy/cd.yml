@@ -1,0 +1,44 @@
+trigger: none
+
+resources:
+  pipelines: 
+  - pipeline: ci
+    source: furyd.temp-example
+    trigger: true
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: 'env | sort'
+
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: |
+      for entry in "$PIPELINE_WORKSPACE"/*
+      do
+        echo "$entry"
+      done
+
+# - task: qetza.replacetokens.replacetokens-task.replacetokens@4
+#   inputs:
+#     rootDirectory: '$(Pipeline.Workspace)/infra'
+#     targetFiles: '**/*.parameters.devops.json'
+#   displayName: Replace tokens in parameters
+
+# - task: AzureResourceManagerTemplateDeployment@3
+#   inputs:
+#     deploymentScope: Subscription
+#     azureResourceManagerConnection: 'Microsoft Partner Network (71584495-ad79-4ff8-ac31-45968fcf4d69)'
+#     subscriptionId: 71584495-ad79-4ff8-ac31-45968fcf4d69
+#     location: uksouth
+#     templateLocation: 'Linked artifact'
+#     csmFile: '$(Pipeline.Workspace)/infra/async.bicep'
+#     csmParametersFile: 'infra/api.parameters.devops.json'
+#     deploymentMode: Incremental
+#     deploymentName: $(Build.BuildId)
+#   displayName: Deploy temporary infrastructure
