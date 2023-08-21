@@ -1,0 +1,72 @@
+pr:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+- name: buildConfiguration
+  value: release
+- name: projectName
+  value: Example.Api
+
+steps:
+- task: UseDotNet@2
+  inputs:
+    packageType: sdk
+    version: 7.x
+    performMultiLevelLookup: true
+  displayName: 'Install .NET SDK'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: restore
+    projects: '**/*.csproj'
+  displayName: Restore
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: build
+    arguments: --configuration $(buildConfiguration) --no-restore
+    projects: 'src/$(projectName)/$(projectName).csproj'
+  displayName: Build API
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: build
+    arguments: --configuration $(buildConfiguration) --no-restore
+    projects: 'tests/**/*.csproj'
+  displayName: Build Tests
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: test
+    arguments: '--configuration $(buildConfiguration) --no-restore --no-build --collect:"XPlat Code Coverage" /p:Threshold=80 /p:ThresholdType=line /p:ThresholdStat=total'
+    projects: 'tests/unit/**/*.csproj'
+    publishTestResults: true
+  displayName: Run Unit Tests
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: test
+    arguments: --configuration $(buildConfiguration) --no-restore --no-build"
+    projects: 'tests/integration/**/*.csproj'
+    publishTestResults: true
+  displayName: Run Integration Tests
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: VSTest
+    testResultsFiles: '*.trx'
+    searchFolder: $(Agent.TempDirectory)
+    failTaskOnFailedTests: true
+    testRunTitle: Publish test results
+    publishRunAttachments: false
+  displayName: Publish Test Results
+
+- task: PublishCodeCoverageResults@2
+  inputs:
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+    failIfCoverageEmpty: true
+  displayName: Publish code coverage report
