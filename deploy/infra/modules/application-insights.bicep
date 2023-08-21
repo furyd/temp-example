@@ -27,6 +27,4 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
   }
 }
 
-var connectionString = applicationInsights.listkeys().connectionString
-
-output connectionString string = connectionString
+output connectionString string = applicationInsights.properties.ConnectionString
