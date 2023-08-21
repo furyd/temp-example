@@ -54,25 +54,34 @@ jobs:
     - name: playwrightPath
       value: $(Pipeline.Workspace)/ci/Playwright
 
+    strategy:
+      matrix:
+        chromium:
+          project: chromium
+        firefox:
+          project: firefox
+        webkit:
+          project: webkit
+
     steps:
     - download: ci
       artifact: Playwright
 
     - task: NodeTool@0
       inputs:
-        versionSpec: '18'
-      displayName: 'Install Node.js'
+        versionSpec: 18
+      displayName: Install Node.js
 
     - script: npm ci
       workingDirectory: '$(playwrightPath)'
-      displayName: 'npm ci'
+      displayName: Clean install (NPM)
 
     - script: npx playwright install --with-deps
       workingDirectory: '$(playwrightPath)'
-      displayName: 'Install Playwright browsers'
+      displayName: Install Playwright browsers
 
-    - script: npx playwright test
+    - script: npx playwright test --project=$(project)
       workingDirectory: $(playwrightPath)
-      displayName: 'Run Playwright tests'
+      displayName: Run Playwright tests
       env:
-        CI: 'true'
+        CI: true
