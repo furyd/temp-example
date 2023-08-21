@@ -3,7 +3,7 @@ trigger: none
 resources:
   pipelines:
   - pipeline: ci
-    source: furyd.temp-example
+    source: Example (CI)
     trigger: true
 
 variables:
