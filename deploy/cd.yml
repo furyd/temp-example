@@ -91,3 +91,9 @@ jobs:
       inputs:
         testRunner: JUnit
         testResultsFiles: '$(playwrightPath)/results.xml'
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(playwrightPath)/playwright-report'
+        ArtifactName: PlaywrightReport
+      displayName: Publish Playwright tests report
