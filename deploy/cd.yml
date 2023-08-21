@@ -20,7 +20,7 @@ steps:
 - task: qetza.replacetokens.replacetokens-task.replacetokens@4
   inputs:
     rootDirectory: '$(infrastructurePath)'
-    targetFiles: '**/*.parameters.devops.json'
+    targetFiles: '*.parameters.devops.json'
   displayName: Replace tokens in parameters
 
 - task: AzureResourceManagerTemplateDeployment@3
