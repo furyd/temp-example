@@ -26,9 +26,9 @@ steps:
 - task: AzureResourceManagerTemplateDeployment@3
   inputs:
     deploymentScope: Subscription
-    azureResourceManagerConnection: 'Microsoft Partner Network (71584495-ad79-4ff8-ac31-45968fcf4d69)'
-    subscriptionId: 71584495-ad79-4ff8-ac31-45968fcf4d69
-    location: uksouth
+    azureResourceManagerConnection: ${{ serviceConnections.azure }}
+    subscriptionId: ${{ subscription.id }}
+    location: ${{ subscription.location }}
     templateLocation: 'Linked artifact'
     csmFile: '$(infrastructurePath)/async.bicep'
     csmParametersFile: '$(infrastructurePath)/async.parameters.devops.json'
