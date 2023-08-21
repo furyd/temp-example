@@ -20,15 +20,15 @@ steps:
 - task: qetza.replacetokens.replacetokens-task.replacetokens@4
   inputs:
     rootDirectory: '$(infrastructurePath)'
-    targetFiles: '**/*.parameters.devops.json'
+    targetFiles: '*.parameters.devops.json'
   displayName: Replace tokens in parameters
 
 - task: AzureResourceManagerTemplateDeployment@3
   inputs:
     deploymentScope: Subscription
-    azureResourceManagerConnection: ${{ serviceConnections.azure }}
-    subscriptionId: ${{ subscription.id }}
-    location: ${{ subscription.location }}
+    azureResourceManagerConnection: $(serviceConnections.azure)
+    subscriptionId: $(subscription.id)
+    location: $(subscription.location)
     templateLocation: 'Linked artifact'
     csmFile: '$(infrastructurePath)/async.bicep'
     csmParametersFile: '$(infrastructurePath)/async.parameters.devops.json'
