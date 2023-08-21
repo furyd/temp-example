@@ -85,3 +85,9 @@ jobs:
       displayName: Run Playwright tests
       env:
         CI: true
+
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testRunner: JUnit
+        testResultsFiles: '$(playwrightPath)/results.xml'
