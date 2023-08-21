@@ -1,0 +1,16 @@
+{
+  "name": "temp-example",
+  "version": "1.0.0",
+  "description": "- Example.Api\r - Example.TestDataLoader",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.37.1"
+  }
+}

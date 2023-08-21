@@ -6,32 +6,97 @@ resources:
     source: furyd.temp-example
     trigger: true
 
-pool:
-  vmImage: ubuntu-latest
-
 variables:
 - group: Example
-- name: infrastructurePath
-  value: $(Pipeline.Workspace)/ci/infrastructure
 
-steps:
-- download: ci
+jobs:
+  - job: DeployInfrastructure
+    displayName: Deploy infrastructure
 
-- task: qetza.replacetokens.replacetokens-task.replacetokens@4
-  inputs:
-    rootDirectory: '$(infrastructurePath)'
-    targetFiles: '*.parameters.devops.json'
-  displayName: Replace tokens in parameters
+    pool:
+      vmImage: ubuntu-latest
 
-- task: AzureResourceManagerTemplateDeployment@3
-  inputs:
-    deploymentScope: Subscription
-    azureResourceManagerConnection: $(serviceConnections.azure)
-    subscriptionId: $(subscription.id)
-    location: $(subscription.location)
-    templateLocation: 'Linked artifact'
-    csmFile: '$(infrastructurePath)/async.bicep'
-    csmParametersFile: '$(infrastructurePath)/async.parameters.devops.json'
-    deploymentMode: Incremental
-    deploymentName: $(Build.BuildId)
-  displayName: Deploy Infrastructure
+    variables:
+    - name: infrastructurePath
+      value: $(Pipeline.Workspace)/ci/infrastructure
+
+    steps:
+    - download: ci
+      artifact: infrastructure
+
+    - task: qetza.replacetokens.replacetokens-task.replacetokens@4
+      inputs:
+        rootDirectory: '$(infrastructurePath)'
+        targetFiles: '*.parameters.devops.json'
+      displayName: Replace tokens in parameters
+
+    - task: AzureResourceManagerTemplateDeployment@3
+      inputs:
+        deploymentScope: Subscription
+        azureResourceManagerConnection: $(serviceConnections.azure)
+        subscriptionId: $(subscription.id)
+        location: $(subscription.location)
+        templateLocation: 'Linked artifact'
+        csmFile: '$(infrastructurePath)/async.bicep'
+        csmParametersFile: '$(infrastructurePath)/async.parameters.devops.json'
+        deploymentMode: Incremental
+        deploymentName: $(Build.BuildId)
+      displayName: Deploy Infrastructure
+
+  - job: PlaywrightTesting
+    displayName: Playwright testing
+    dependsOn: DeployInfrastructure
+
+    pool:
+      vmImage: ubuntu-latest
+
+    variables:
+    - name: playwrightPath
+      value: $(Pipeline.Workspace)/ci/Playwright
+
+    strategy:
+      matrix:
+        chromium:
+          project: chromium
+        firefox:
+          project: firefox
+        webkit:
+          project: webkit
+
+    steps:
+    - download: ci
+      artifact: Playwright
+
+    - task: NodeTool@0
+      inputs:
+        versionSpec: 18
+      displayName: Install Node.js
+
+    - script: npm ci
+      workingDirectory: '$(playwrightPath)'
+      displayName: Clean install (NPM)
+
+    - script: npx playwright install --with-deps
+      workingDirectory: '$(playwrightPath)'
+      displayName: Install Playwright browsers
+
+    - script: npx playwright test --project=$(project)
+      workingDirectory: $(playwrightPath)
+      displayName: Run Playwright tests
+      env:
+        CI: true
+
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testRunner: JUnit
+        testResultsFiles: '$(playwrightPath)/results.xml'
+        mergeTestResults: true
+        failTaskOnFailedTests: true
+        testRunTitle: Example Playwright tests
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(playwrightPath)/playwright-report'
+        ArtifactName: PlaywrightReport
+      displayName: Publish Playwright tests report

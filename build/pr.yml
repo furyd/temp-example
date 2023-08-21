@@ -1,4 +1,4 @@
-trigger:
+pr:
   - main
 
 pool:
@@ -41,7 +41,7 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: test
-    arguments: --configuration $(buildConfiguration) --no-restore --no-build --collect:"XPlat Code Coverage"
+    arguments: '--configuration $(buildConfiguration) --no-restore --no-build --collect:"XPlat Code Coverage" /p:Threshold=80 /p:ThresholdType=line /p:ThresholdStat=total'
     projects: 'tests/unit/**/*.csproj'
     publishTestResults: true
   displayName: Run Unit Tests
@@ -70,29 +70,3 @@ steps:
     summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
     failIfCoverageEmpty: true
   displayName: Publish code coverage report
-
-- task: DotNetCoreCLI@2
-  inputs:
-    command: publish
-    publishWebProjects: false
-    projects: 'src/$(projectName)/$(projectName).csproj'
-    arguments: --configuration $(buildConfiguration) --output "$(build.artifactstagingdirectory)/api"
-  displayName: Publish project
-
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(build.artifactstagingdirectory)/api'
-    ArtifactName: api
-  displayName: Publish API
-
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: 'deploy/infra'
-    ArtifactName: infrastructure
-  displayName: Publish Infrastructure as Code files
-
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: 'tests/e2e/playwright'
-    ArtifactName: Playwright
-  displayName: Publish Playwright tests
