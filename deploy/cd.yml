@@ -91,6 +91,9 @@ jobs:
       inputs:
         testRunner: JUnit
         testResultsFiles: '$(playwrightPath)/results.xml'
+        mergeTestResults: true
+        failTaskOnFailedTests: true
+        testRunTitle: Example Playwright tests
 
     - task: PublishBuildArtifacts@1
       inputs:
