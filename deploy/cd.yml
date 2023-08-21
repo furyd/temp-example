@@ -6,32 +6,39 @@ resources:
     source: furyd.temp-example
     trigger: true
 
-pool:
-  vmImage: ubuntu-latest
-
 variables:
 - group: Example
-- name: infrastructurePath
-  value: $(Pipeline.Workspace)/ci/infrastructure
 
-steps:
-- download: ci
+jobs:
+  - job: DeployInfrastructure
+    displayName: Deploy infrastructure
 
-- task: qetza.replacetokens.replacetokens-task.replacetokens@4
-  inputs:
-    rootDirectory: '$(infrastructurePath)'
-    targetFiles: '*.parameters.devops.json'
-  displayName: Replace tokens in parameters
+    pool:
+      vmImage: ubuntu-latest
 
-- task: AzureResourceManagerTemplateDeployment@3
-  inputs:
-    deploymentScope: Subscription
-    azureResourceManagerConnection: $(serviceConnections.azure)
-    subscriptionId: $(subscription.id)
-    location: $(subscription.location)
-    templateLocation: 'Linked artifact'
-    csmFile: '$(infrastructurePath)/async.bicep'
-    csmParametersFile: '$(infrastructurePath)/async.parameters.devops.json'
-    deploymentMode: Incremental
-    deploymentName: $(Build.BuildId)
-  displayName: Deploy Infrastructure
+    variables:
+    - name: infrastructurePath
+      value: $(Pipeline.Workspace)/ci/infrastructure
+
+    steps:
+    - download: ci
+      artifact: infrastructure
+
+    - task: qetza.replacetokens.replacetokens-task.replacetokens@4
+      inputs:
+        rootDirectory: '$(infrastructurePath)'
+        targetFiles: '*.parameters.devops.json'
+      displayName: Replace tokens in parameters
+
+    - task: AzureResourceManagerTemplateDeployment@3
+      inputs:
+        deploymentScope: Subscription
+        azureResourceManagerConnection: $(serviceConnections.azure)
+        subscriptionId: $(subscription.id)
+        location: $(subscription.location)
+        templateLocation: 'Linked artifact'
+        csmFile: '$(infrastructurePath)/async.bicep'
+        csmParametersFile: '$(infrastructurePath)/async.parameters.devops.json'
+        deploymentMode: Incremental
+        deploymentName: $(Build.BuildId)
+      displayName: Deploy Infrastructure
