@@ -90,3 +90,9 @@ steps:
     PathtoPublish: 'deploy/infra'
     ArtifactName: infrastructure
   displayName: Publish Infrastructure as Code files
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'tests/e2e/playwright'
+    ArtifactName: Playwright
+  displayName: Publish Playwright tests
